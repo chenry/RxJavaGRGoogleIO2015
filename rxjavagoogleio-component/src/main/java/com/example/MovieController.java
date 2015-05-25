@@ -41,7 +41,7 @@ public class MovieController {
     }
 
 
-    public rx.Observable<List<String>> findTotalMoviesUsingMutipleSearchStrings(String searchString1, String searchString2) {
+    public rx.Observable<List<String>> findAllMovieTitlesUsingTheTwoSearchStrings(String searchString1, String searchString2) {
         Observable<MovieSearchResult> firstSearchResultObservable = movieDao.findMoviesBySearchString(searchString1);
         Observable<MovieSearchResult> secondSearchResultObservable = movieDao.findMoviesBySearchString(searchString2);
 

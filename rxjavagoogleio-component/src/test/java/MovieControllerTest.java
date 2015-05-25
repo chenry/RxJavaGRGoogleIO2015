@@ -46,7 +46,7 @@ public class MovieControllerTest {
     @Test
     public void testFindTotalMoviesUsingMultipleSearchStrings() throws Exception {
         System.out.println("Starting now!!!");
-        movieController.findTotalMoviesUsingMutipleSearchStrings("Avengers", "Batman").
+        movieController.findAllMovieTitlesUsingTheTwoSearchStrings("Avengers", "Batman").
                 subscribe(new Action1<List<String>>() {
                     @Override
                     public void call(List<String> allTitles) {
