@@ -5,7 +5,9 @@ import com.example.model.SearchResultItem;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import rx.functions.Action1;
 
@@ -15,9 +17,11 @@ import rx.functions.Action1;
 public class MovieControllerTest {
 
     MovieController movieController;
+    CountDownLatch latch;
     @Before
     public void setup() {
         movieController = new MovieController();
+        latch = new CountDownLatch(1);
     }
 
     @Test
@@ -31,9 +35,29 @@ public class MovieControllerTest {
                 for (SearchResultItem currSearchResultItem : movieSearchResult.getSearchResultItems()) {
                     System.out.println(String.format("%s, %s, %s, %s", currSearchResultItem.getImdbId(), currSearchResultItem.getTitle(), currSearchResultItem.getType(), currSearchResultItem.getYear()));
                 }
+                latch.countDown();
             }
         });
 
-        Thread.sleep(5000);
+        latch.await();
     }
+
+
+    @Test
+    public void testFindTotalMoviesUsingMultipleSearchStrings() throws Exception {
+        System.out.println("Starting now!!!");
+        movieController.findTotalMoviesUsingMutipleSearchStrings("Avengers", "Batman").
+                subscribe(new Action1<List<String>>() {
+                    @Override
+                    public void call(List<String> allTitles) {
+                        for (String currTitle : allTitles) {
+                            System.out.println("Movie Title: " + currTitle);
+                        }
+                        latch.countDown();
+                    }
+                });
+
+        latch.await();
+    }
+
 }
