@@ -26,6 +26,9 @@ public class MovieControllerTest {
         latch = new CountDownLatch(1);
     }
 
+    /*
+    Testing the api call.
+     */
     @Test
     public void testFindMoviesBySearchString() throws Exception {
         movieController
@@ -43,7 +46,28 @@ public class MovieControllerTest {
         latch.await();
     }
 
+    /*
+    Just testing the movie detail api
+     */
+    @Test
+    public void testFindMovieDetailByImdbId() throws Exception {
+        movieController
+                .findMovieDetailByImdbId("tt0112462")
+                .subscribe(new Action1<MovieDetail>() {
+                    @Override
+                    public void call(MovieDetail movieDetail) {
+//                        System.out.println(movieDetail);
+                        latch.countDown();
+                    }
+                });
 
+        latch.await();
+    }
+
+
+
+
+    // ZIP
     @Test
     public void testFindTotalMoviesUsingMultipleSearchStrings() throws Exception {
         movieController
@@ -61,21 +85,7 @@ public class MovieControllerTest {
         latch.await();
     }
 
-    @Test
-    public void testFindMovieDetailByImdbId() throws Exception {
-        movieController
-                .findMovieDetailByImdbId("tt0112462")
-                .subscribe(new Action1<MovieDetail>() {
-                    @Override
-                    public void call(MovieDetail movieDetail) {
-//                        System.out.println(movieDetail);
-                        latch.countDown();
-                    }
-                });
-
-        latch.await();
-    }
-
+    //MERGE
     @Test
     public void testFindMovieDetailsByTwoSearchStrings() throws Exception {
         movieController
