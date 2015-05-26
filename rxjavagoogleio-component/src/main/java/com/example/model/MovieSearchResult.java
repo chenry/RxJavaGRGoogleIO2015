@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * Created by carlushenry on 5/25/15.
  */
+//http://pojo.sodhanalibrary.com/
 public class MovieSearchResult {
     @Expose
     @SerializedName("Search")
