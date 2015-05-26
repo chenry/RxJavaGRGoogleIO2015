@@ -1,19 +1,87 @@
 package com.sagetech.rxjavagoogleio2015;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.app.RxActivity;
+import rx.android.lifecycle.LifecycleObservable;
+import rx.android.view.ViewObservable;
+import rx.android.widget.OnTextChangeEvent;
+import rx.android.widget.WidgetObservable;
+import rx.functions.Action1;
+import rx.functions.Func3;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends RxActivity {
+    @InjectView(R.id.txtName1)
+    EditText txtName1;
+
+    @InjectView(R.id.txtName2)
+    EditText txtName2;
+
+    @InjectView(R.id.txtName3)
+    EditText txtName3;
+
+    @InjectView(R.id.txtStatus)
+    TextView txtStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Observable<OnTextChangeEvent> onTextChangeTxtName1Observable = createOnTextChangeEventObservable(txtName1);
+        Observable<OnTextChangeEvent> onTextChangeTxtName2Observable = createOnTextChangeEventObservable(txtName2);
+        Observable<OnTextChangeEvent> onTextChangeTxtName3Observable = createOnTextChangeEventObservable(txtName3);
+
+        Observable.combineLatest(onTextChangeTxtName1Observable, onTextChangeTxtName2Observable, onTextChangeTxtName3Observable, new Func3<OnTextChangeEvent, OnTextChangeEvent, OnTextChangeEvent, Boolean>() {
+            @Override
+            public Boolean call(OnTextChangeEvent onTextChangeEvent, OnTextChangeEvent onTextChangeEvent2, OnTextChangeEvent onTextChangeEvent3) {
+                String txt1 = onTextChangeEvent.text().toString();
+                String txt2 = onTextChangeEvent2.text().toString();
+                String txt3 = onTextChangeEvent3.text().toString();
+
+                return isValidText(txt1) && isValidText(txt2) && isValidText(txt3);
+
+            }
+
+            public boolean isValidText(String txt) {
+                return txt != null && !"".equals(txt.trim());
+            }
+        }).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                updateStatusText(aBoolean);
+            }
+        });
+    }
+
+    private void updateStatusText(Boolean isValid) {
+        if (isValid) {
+            txtStatus.setText("Good");
+        } else {
+            txtStatus.setText("Bad");
+        }
+    }
+
+    public Observable<OnTextChangeEvent> createOnTextChangeEventObservable(EditText txtName) {
+        return LifecycleObservable.bindActivityLifecycle(lifecycle(), WidgetObservable.text(txtName));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
