@@ -49,7 +49,19 @@ public class MainActivity extends RxActivity {
         Observable<OnTextChangeEvent> onTextChangeTxtName2Observable = createOnTextChangeEventObservable(txtName2);
         Observable<OnTextChangeEvent> onTextChangeTxtName3Observable = createOnTextChangeEventObservable(txtName3);
 
-        Observable.combineLatest(onTextChangeTxtName1Observable, onTextChangeTxtName2Observable, onTextChangeTxtName3Observable, new Func3<OnTextChangeEvent, OnTextChangeEvent, OnTextChangeEvent, Boolean>() {
+        Observable
+                .combineLatest(
+                        onTextChangeTxtName1Observable, onTextChangeTxtName2Observable, onTextChangeTxtName3Observable, validateStrings())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean aBoolean) {
+                        updateStatusText(aBoolean);
+                    }
+                });
+    }
+
+    private Func3<OnTextChangeEvent, OnTextChangeEvent, OnTextChangeEvent, Boolean> validateStrings() {
+        return new Func3<OnTextChangeEvent, OnTextChangeEvent, OnTextChangeEvent, Boolean>() {
             @Override
             public Boolean call(OnTextChangeEvent onTextChangeEvent, OnTextChangeEvent onTextChangeEvent2, OnTextChangeEvent onTextChangeEvent3) {
                 String txt1 = onTextChangeEvent.text().toString();
@@ -63,12 +75,7 @@ public class MainActivity extends RxActivity {
             public boolean isValidText(String txt) {
                 return txt != null && !"".equals(txt.trim());
             }
-        }).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean aBoolean) {
-                updateStatusText(aBoolean);
-            }
-        });
+        };
     }
 
     private void updateStatusText(Boolean isValid) {
