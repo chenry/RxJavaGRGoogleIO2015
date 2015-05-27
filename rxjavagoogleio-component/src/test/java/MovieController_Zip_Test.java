@@ -23,6 +23,7 @@ public class MovieController_Zip_Test {
     }
 
     // ZIP
+    // I want to wait for the observables to both be done, then react off of that stream.  Synchronize on the emissions.
     @Test
     public void testFindTotalMoviesUsingMultipleSearchStrings() throws Exception {
         movieController

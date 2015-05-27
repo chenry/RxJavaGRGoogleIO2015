@@ -4,16 +4,14 @@ import com.example.model.MovieDetail;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import rx.Subscriber;
-import rx.functions.Action1;
 
 /**
  * Created by carlushenry on 5/27/15.
  */
-public class MovieController_Merge_Test {
+public class MovieController_Concat_Test {
     MovieController movieController;
     CountDownLatch latch;
 
@@ -23,12 +21,12 @@ public class MovieController_Merge_Test {
         latch = new CountDownLatch(1);
     }
 
-    //MERGE
-    // I want the details of the movies as they arrive.  I don't want to synchronize.
+    // CONCAT
+    // I want the details to come out in the order of the search
     @Test
     public void testFindMovieDetailsByTwoSearchStrings() throws Exception {
         movieController
-                .findAllMovieDetails("Avengers", "Batman")
+                .findAllMovieDetailsConcat("Batman", "Avengers")
                 .subscribe(printMovieTitles());
 
         latch.await();
@@ -50,7 +48,7 @@ public class MovieController_Merge_Test {
 
             @Override
             public void onNext(MovieDetail movieDetail) {
-                System.out.println("Merge: " + movieDetail.getTitle());
+                System.out.println("Concat: " + movieDetail.getTitle());
             }
         };
     }

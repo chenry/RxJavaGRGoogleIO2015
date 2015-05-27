@@ -72,6 +72,13 @@ public class MovieController {
         return Observable.merge(searchString1ObservableDetail, searchString2ObservableDetail);
     }
 
+    // CONCAT
+    public Observable<MovieDetail> findAllMovieDetailsConcat(String searchString1, String searchString2) {
+        Observable<MovieDetail> searchString1ObservableDetail = createObservableForMovieDetailsBySearchString(searchString1);
+        Observable<MovieDetail> searchString2ObservableDetail = createObservableForMovieDetailsBySearchString(searchString2);;
+        return Observable.concat(searchString1ObservableDetail, searchString2ObservableDetail);
+    }
+
     private Observable<MovieDetail> createObservableForMovieDetailsBySearchString(String searchString1) {
         return findMoviesBySearchString(searchString1)
                 .flatMap(new Func1<MovieSearchResult, Observable<SearchResultItem>>() {
