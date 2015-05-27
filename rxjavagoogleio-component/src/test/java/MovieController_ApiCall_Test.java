@@ -6,17 +6,14 @@ import com.example.model.SearchResultItem;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import rx.functions.Action1;
 
 /**
- * Created by carlushenry on 5/25/15.
+ * Created by carlushenry on 5/27/15.
  */
-public class MovieControllerTest {
-
+public class MovieController_ApiCall_Test {
     MovieController movieController;
     CountDownLatch latch;
 
@@ -37,7 +34,7 @@ public class MovieControllerTest {
                     @Override
                     public void call(MovieSearchResult movieSearchResult) {
                         for (SearchResultItem currSearchResultItem : movieSearchResult.getSearchResultItems()) {
-//                            System.out.println(String.format("%s, %s, %s, %s", currSearchResultItem.getImdbId(), currSearchResultItem.getTitle(), currSearchResultItem.getType(), currSearchResultItem.getYear()));
+                            System.out.println(String.format("%s, %s, %s, %s", currSearchResultItem.getImdbId(), currSearchResultItem.getTitle(), currSearchResultItem.getType(), currSearchResultItem.getYear()));
                         }
                         latch.countDown();
                     }
@@ -56,7 +53,7 @@ public class MovieControllerTest {
                 .subscribe(new Action1<MovieDetail>() {
                     @Override
                     public void call(MovieDetail movieDetail) {
-//                        System.out.println(movieDetail);
+                        System.out.println(movieDetail);
                         latch.countDown();
                     }
                 });
@@ -67,37 +64,7 @@ public class MovieControllerTest {
 
 
 
-    // ZIP
-    @Test
-    public void testFindTotalMoviesUsingMultipleSearchStrings() throws Exception {
-        movieController
-                .findAllMovieTitlesUsingTheTwoSearchStrings("Avengers", "Batman")
-                .subscribe(new Action1<List<String>>() {
-                    @Override
-                    public void call(List<String> allTitles) {
-                        for (String currTitle : allTitles) {
-//                            System.out.println("Movie Title: " + currTitle);
-                        }
-                        latch.countDown();
-                    }
-                });
 
-        latch.await();
-    }
 
-    //MERGE
-    @Test
-    public void testFindMovieDetailsByTwoSearchStrings() throws Exception {
-        movieController
-                .findAllMovieDetails("Avengers", "Batman")
-                .subscribe(new Action1<MovieDetail>() {
-                    @Override
-                    public void call(MovieDetail movieDetail) {
-                        System.out.println("Merge: " + movieDetail.getTitle());
-                        latch.countDown();
-                    }
-                });
 
-        latch.await();
-    }
 }
