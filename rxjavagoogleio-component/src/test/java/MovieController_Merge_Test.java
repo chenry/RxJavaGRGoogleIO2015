@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import rx.Subscriber;
 import rx.functions.Action1;
 
 /**
@@ -27,14 +28,29 @@ public class MovieController_Merge_Test {
     public void testFindMovieDetailsByTwoSearchStrings() throws Exception {
         movieController
                 .findAllMovieDetails("Avengers", "Batman")
-                .subscribe(new Action1<MovieDetail>() {
-                    @Override
-                    public void call(MovieDetail movieDetail) {
-                        System.out.println("Merge: " + movieDetail.getTitle());
-                        latch.countDown();
-                    }
-                });
+                .subscribe(printMovieTitles());
 
         latch.await();
+    }
+
+    /* ============================================= */
+
+    private Subscriber<MovieDetail> printMovieTitles() {
+        return new Subscriber<MovieDetail>() {
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(MovieDetail movieDetail) {
+                System.out.println("Merge: " + movieDetail.getTitle());
+            }
+        };
     }
 }

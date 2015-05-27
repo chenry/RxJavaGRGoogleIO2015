@@ -29,16 +29,8 @@ public class MovieController_ApiCall_Test {
     @Test
     public void testFindMoviesBySearchString() throws Exception {
         movieController
-                .findMoviesBySearchString("Avengers")
-                .subscribe(new Action1<MovieSearchResult>() {
-                    @Override
-                    public void call(MovieSearchResult movieSearchResult) {
-                        for (SearchResultItem currSearchResultItem : movieSearchResult.getSearchResultItems()) {
-                            System.out.println(String.format("%s, %s, %s, %s", currSearchResultItem.getImdbId(), currSearchResultItem.getTitle(), currSearchResultItem.getType(), currSearchResultItem.getYear()));
-                        }
-                        latch.countDown();
-                    }
-                });
+                .findMoviesBySearchString("Avengers") // will only emit one item.
+                .subscribe(printMovieInformation());
 
         latch.await();
     }
@@ -49,17 +41,37 @@ public class MovieController_ApiCall_Test {
     @Test
     public void testFindMovieDetailByImdbId() throws Exception {
         movieController
-                .findMovieDetailByImdbId("tt0112462")
-                .subscribe(new Action1<MovieDetail>() {
-                    @Override
-                    public void call(MovieDetail movieDetail) {
-                        System.out.println(movieDetail);
-                        latch.countDown();
-                    }
-                });
+                .findMovieDetailByImdbId("tt0112462") // will only emit one item
+                .subscribe(printMovieInfoFromDetail());
 
         latch.await();
     }
+
+    /* ======================================================================== */
+
+    private Action1<MovieDetail> printMovieInfoFromDetail() {
+        return new Action1<MovieDetail>() {
+            @Override
+            public void call(MovieDetail movieDetail) {
+                System.out.println(movieDetail);
+                latch.countDown();
+            }
+        };
+    }
+
+    private Action1<MovieSearchResult> printMovieInformation() {
+        return new Action1<MovieSearchResult>() {
+            @Override
+            public void call(MovieSearchResult movieSearchResult) {
+                for (SearchResultItem currSearchResultItem : movieSearchResult.getSearchResultItems()) {
+                    System.out.println(String.format("%s, %s, %s, %s", currSearchResultItem.getImdbId(), currSearchResultItem.getTitle(), currSearchResultItem.getType(), currSearchResultItem.getYear()));
+                }
+                latch.countDown();
+            }
+        };
+    }
+
+
 
 
 
