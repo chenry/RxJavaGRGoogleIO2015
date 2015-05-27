@@ -42,6 +42,10 @@ public class MainActivity extends RxActivity {
     protected void onStart() {
         super.onStart();
 
+        startObservingFor3MandatoryFieldsBeingPopulated();
+    }
+
+    private void startObservingFor3MandatoryFieldsBeingPopulated() {
         Observable<OnTextChangeEvent> onTextChangeTxtName1Observable = createOnTextChangeEventObservable(txtName1);
         Observable<OnTextChangeEvent> onTextChangeTxtName2Observable = createOnTextChangeEventObservable(txtName2);
         Observable<OnTextChangeEvent> onTextChangeTxtName3Observable = createOnTextChangeEventObservable(txtName3);
